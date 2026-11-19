@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>心靈防線崩潰：全球心理危機生存戰</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Noto Sans TC -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', 'Inter', sans-serif;
+        }
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.85; transform: scale(1.02); }
+        }
+        .animate-pulse-slow {
+            animation: pulse-slow 3s infinite ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+        .animate-shake {
+            animation: shake 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-full flex flex-col">
+    <header class="bg-slate-800 border-b border-slate-700 py-4 px-6 shadow-md flex flex-wrap justify-between items-center gap-3">
+        <div class="flex items-center space-x-3">
+            <div class="bg-indigo-600 p-2.5 rounded-xl shadow-lg shadow-indigo-500/30 text-white">
+                <i class="fa-solid fa-brain text-xl"></i>
+            </div>
+            <div>
+                <h1 class="text-lg md:text-xl font-bold tracking-wide bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400 bg-clip-text text-transparent">
+                    心靈防線崩潰：全球心理危機生存戰
+                </h1>
+                <p class="text-xs text-slate-400">公共衛生護理學期末互動模擬遊戲（2～4 組多人對戰＆雙軌教學版）</p>
+            </div>
+        </div>
+        <div class="flex items-center flex-wrap gap-2">
+            <button onclick="app.toggleHandbook()" class="px-3.5 py-2 text-xs md:text-sm font-medium rounded-lg bg-emerald-600/20 border border-emerald-500/40 text-emerald-300 transition hover:bg-emerald-600 hover:text-white flex items-center">
+                <i class="fa-solid fa-book-open-reader mr-1.5"></i> 線上組員資源手冊
+            </button>
+            <button onclick="app.switchTab('game')" id="nav-game" class="px-3.5 py-2 text-xs md:text-sm font-medium rounded-lg bg-indigo-600 text-white transition shadow hover:bg-indigo-500">
+                <i class="fa-solid fa-gamepad mr-1.5"></i> 遊戲主畫面
+            </button>
+            <button onclick="app.switchTab('reflection')" id="nav-reflection" class="px-3.5 py-2 text-xs md:text-sm font-medium rounded-lg bg-slate-700 text-slate-300 transition hover:bg-slate-600 hover:text-white">
+                <i class="fa-solid fa-book-medical mr-1.5"></i> 公衛護理反思與總結
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 flex flex-col">
+
+        <!-- TAB 1: GAME SCREEN -->
+        <div id="tab-game" class="flex-1 flex flex-col space-y-6">
+            
+            <!-- Welcome / Multiplayer Setup View -->
+            <div id="view-setup" class="flex-1 flex flex-col justify-center items-center py-4">
+                <div class="text-center max-w-2xl mx-auto mb-6">
+                    <span class="inline-block bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-xs font-semibold px-3 py-1 rounded-full mb-3">
+                        多人分組對戰模式・2 至 4 組同場競技
+                    </span>
+                    <h2 class="text-2xl md:text-4xl font-extrabold text-white mb-3 leading-tight">
+                        組建你的公衛抗壓戰隊，誰能守住最後防線？
+                    </h2>
+                    <p class="text-slate-300 text-xs md:text-sm leading-relaxed">
+                        請選擇參戰組數（2～4 組），並為各組分配隊名與社會角色。每回合由各組輪流行動或面對全球危機，最終壓力最低或唯一存活的隊伍獲勝！
+                    </p>
+                </div>
+
+                <!-- Team Count Selector -->
+                <div class="flex items-center space-x-3 mb-6 bg-slate-800/90 p-2 rounded-2xl border border-slate-700">
+                    <span class="text-xs font-bold text-slate-300 px-3"><i class="fa-solid fa-users mr-1.5 text-indigo-400"></i>參戰隊伍數：</span>
+                    <button onclick="app.setTeamCount(2)" id="btn-teams-2" class="team-count-btn px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white transition">2 組對決</button>
+                    <button onclick="app.setTeamCount(3)" id="btn-teams-3" class="team-count-btn px-4 py-2 rounded-xl text-xs font-bold bg-slate-700 text-slate-300 hover:bg-slate-600 transition">3 組混戰</button>
+                    <button onclick="app.setTeamCount(4)" id="btn-teams-4" class="team-count-btn px-4 py-2 rounded-xl text-xs font-bold bg-slate-700 text-slate-300 hover:bg-slate-600 transition">4 組大亂鬥</button>
+                </div>
+
+                <!-- Dynamic Team Configuration Cards -->
+                <div id="team-setup-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full max-w-6xl mb-6">
+                    <!-- Injected via JS -->
+                </div>
+
+                <!-- Character Reference Mini Legend -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 w-full max-w-6xl mb-6 text-xs">
+                    <div class="bg-slate-800/60 border border-cyan-500/30 rounded-xl p-3">
+                        <div class="font-bold text-cyan-300 mb-1">💻 遠距斜槓青年（初始 45 分）</div>
+                        <p class="text-slate-400">防護盾 2 次｜被動：抽到「數位/社群焦慮」事件壓力額外 +10。</p>
+                    </div>
+                    <div class="bg-slate-800/60 border border-amber-500/30 rounded-xl p-3">
+                        <div class="font-bold text-amber-300 mb-1">🏥 醫療/第一線人員（初始 55 分）</div>
+                        <p class="text-slate-400">防護盾 2 次｜被動：抽到「創傷/孤立」事件壓力額外 +10。</p>
+                    </div>
+                    <div class="bg-slate-800/60 border border-purple-500/30 rounded-xl p-3">
+                        <div class="font-bold text-purple-300 mb-1">👵 亞健康獨居長者（初始 65 分）</div>
+                        <p class="text-slate-400">防護盾 1 次｜被動：每回合基礎壓力自動 +8。</p>
+                    </div>
+                </div>
+
+                <!-- Start Button -->
+                <button onclick="app.startGame()" id="start-btn" class="px-8 py-3.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition transform hover:-translate-y-0.5">
+                    <i class="fa-solid fa-swords mr-2"></i> 開始多人分組生存戰
+                </button>
+            </div>
+
+            <!-- Active Gameplay Dashboard View (Hidden initially) -->
+            <div id="view-gameplay" class="hidden flex-1 flex flex-col space-y-5">
+                
+                <!-- Multiplayer Scoreboard / Pressure Overview Grid -->
+                <div class="bg-slate-800/90 border border-slate-700 rounded-2xl p-4 shadow-lg">
+                    <div class="flex flex-wrap justify-between items-center mb-3 gap-2">
+                        <h3 class="text-xs md:text-sm font-bold text-slate-300 flex items-center">
+                            <i class="fa-solid fa-ranking-star mr-2 text-amber-400"></i> 即時戰況儀表板（壓力越低排名越高，達 100 分淘汰）
+                        </h3>
+                        <span class="bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-xs px-3 py-1 rounded-full font-bold" id="round-indicator">
+                            第 1 回合 / 共 5 回合
+                        </span>
+                    </div>
+                    <div id="scoreboard-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                        <!-- Injected dynamically for all teams -->
+                    </div>
+                </div>
+
+                <!-- Current Active Turn Team Banner -->
+                <div id="active-turn-banner" class="bg-gradient-to-r from-indigo-900/70 via-slate-800 to-purple-900/70 border-2 border-indigo-500/60 rounded-2xl p-4 md:p-5 shadow-lg flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div class="flex items-center space-x-4">
+                        <div id="active-char-icon" class="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-indigo-500/20 text-indigo-300 flex items-center justify-center text-2xl md:text-3xl border border-indigo-400/30">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center flex-wrap gap-2">
+                                <span class="bg-amber-500 text-slate-950 text-[11px] font-black px-2.5 py-0.5 rounded-md uppercase tracking-wider">目前行動隊伍</span>
+                                <span id="active-team-name" class="text-lg md:text-xl font-black text-white">第 1 組</span>
+                                <span id="active-char-name" class="text-xs md:text-sm font-semibold text-indigo-300">💻 遠距斜槓青年</span>
+                            </div>
+                            <p class="text-xs text-slate-300 mt-1" id="active-debuff-text">被動效果...</p>
+                        </div>
+                    </div>
+
+                    <!-- Shields & Buffs for Active Team -->
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-slate-900/80 border border-slate-700 px-3.5 py-2 rounded-xl text-center">
+                            <span class="block text-[10px] text-slate-400">本組防護盾</span>
+                            <span id="shield-count" class="text-base font-bold text-emerald-400">2 次</span>
+                        </div>
+                        <button onclick="app.useShield()" id="shield-btn" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow transition flex items-center space-x-1.5">
+                            <i class="fa-solid fa-shield-halved"></i>
+                            <span>使用防護盾 (-15分)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Event Card & Game Log Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Left: Current Event Card & Proactive Quiz Trigger -->
+                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-lg flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-center mb-4">
+                                <span id="step-badge" class="bg-indigo-500/10 text-indigo-400 text-xs font-semibold px-3 py-1 rounded-full border border-indigo-500/20">
+                                    <i class="fa-solid fa-bolt mr-1"></i> 步驟 1：抽取事件卡
+                                </span>
+                                <span id="event-card-id" class="text-xs text-slate-400">Round 1</span>
+                            </div>
+                            <h4 id="event-title" class="text-xl font-bold text-white mb-3">請目前行動隊伍抽取心理危機事件</h4>
+                            <p id="event-desc" class="text-slate-300 text-sm leading-relaxed mb-6">
+                                每隊輪流進行兩階段挑戰：① 抽取事件卡（部分全球危機將波及全場所有隊伍！） ② 進行「公衛心靈護盾答題挑戰」主動降壓！
+                            </p>
+                        </div>
+                        <div class="space-y-3">
+                            <button onclick="app.drawEventCard()" id="draw-card-btn" class="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition flex items-center justify-center space-x-2">
+                                <i class="fa-solid fa-hand-pointer"></i>
+                                <span>① 抽取心理危機事件卡</span>
+                            </button>
+                            <button onclick="app.triggerRoutineQuiz()" id="routine-quiz-btn" disabled class="w-full py-3.5 bg-slate-700 text-slate-500 font-bold rounded-xl transition flex items-center justify-center space-x-2 cursor-not-allowed">
+                                <i class="fa-solid fa-clipboard-question"></i>
+                                <span>② 進行本組公衛答題降壓挑戰</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Right: Game Log / Action Hub -->
+                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-lg flex flex-col justify-between">
+                        <div>
+                            <h4 class="text-sm font-semibold text-slate-300 mb-3 flex items-center">
+                                <i class="fa-solid fa-terminal mr-2 text-purple-400"></i> 多人對戰戰況與公衛日誌
+                            </h4>
+                            <div id="game-log" class="bg-slate-900/80 border border-slate-700/80 rounded-xl p-4 h-48 overflow-y-auto space-y-2 text-xs text-slate-300 font-mono">
+                                <p class="text-slate-500">[系統就緒] 請設定參戰隊伍並開始多人分組生存戰。</p>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <button onclick="app.nextTurn()" id="next-round-btn" disabled class="w-full py-3 bg-slate-700 text-slate-400 font-bold rounded-xl transition cursor-not-allowed">
+                                完成本組行動後換下一組
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Game Over / Victory Podium View (Hidden initially) -->
+            <div id="view-gameover" class="hidden flex-1 flex flex-col justify-center items-center py-8 text-center max-w-3xl mx-auto w-full">
+                <div id="gameover-icon" class="w-20 h-20 rounded-3xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-4xl mb-4 shadow-xl animate-bounce">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+                <h3 id="gameover-title" class="text-3xl font-extrabold text-white mb-2">生存戰最終排行榜</h3>
+                <p id="gameover-desc" class="text-slate-300 text-sm md:text-base mb-6 leading-relaxed">
+                    歷經全球心理危機考驗，各組最終心靈韌性與壓力指數結算如下：
+                </p>
+                
+                <!-- Podium Leaderboard -->
+                <div id="final-podium" class="w-full space-y-3 mb-8 text-left">
+                    <!-- Injected via JS -->
+                </div>
+
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button onclick="app.resetGame()" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg transition">
+                        <i class="fa-solid fa-rotate-right mr-2"></i> 重新開啟對戰
+                    </button>
+                    <button onclick="app.switchTab('reflection')" class="px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl transition">
+                        查看公衛護理知識總結
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- TAB 2: REFLECTION & KNOWLEDGE DASHBOARD -->
+        <div id="tab-reflection" class="hidden flex-1 flex flex-col space-y-8">
+            
+            <!-- Header Banner -->
+            <div class="bg-gradient-to-r from-indigo-900/60 via-purple-900/60 to-slate-800 border border-indigo-500/30 rounded-2xl p-6 md:p-8 shadow-xl">
+                <span class="inline-block bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-xs font-semibold px-3 py-1 rounded-full mb-3">
+                    公共衛生護理學・期末知識總結
+                </span>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-white mb-3">
+                    全球心理危機與公衛護理介入總結
+                </h2>
+                <p class="text-slate-300 text-sm md:text-base leading-relaxed max-w-4xl">
+                    本遊戲融合了當代全球心理衛生危機、社會決定因子（SDOH）與三段五級預防概念。以下為公共衛生護理師在社區心理衛生中扮演的三項核心介入角色與核心學理。
+                </p>
+            </div>
+
+            <!-- Grid of 3 Core Nursing Roles -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <!-- Role 1: Educator -->
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-lg flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center text-2xl mb-4">
+                            <i class="fa-solid fa-chalkboard-user"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">1. 教育者 (Educator)</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                            提升民眾的「心理健康識能（Mental Health Literacy）」，打破精神疾病汙名化，教導民眾辨識自己與他人的焦慮、失眠與耗竭訊號。
+                        </p>
+                        <div class="space-y-1.5 text-xs text-slate-400 bg-slate-900/50 p-3 rounded-xl border border-slate-700/50">
+                            <p>• 推廣正念減壓與壓力因應技巧</p>
+                            <p>• 宣導求助不等於軟弱的正確觀念</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Role 2: Case Manager & Collaborator -->
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-lg flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-2xl mb-4">
+                            <i class="fa-solid fa-network-wired"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">2. 個案管理者與資源連結者</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                            盤點社區脆弱族群（獨居長者、慢性病患、過勞族群），主動建立關懷網，串聯社區心衛中心、安心專線 1925 與醫療資源。
+                        </p>
+                        <div class="space-y-1.5 text-xs text-slate-400 bg-slate-900/50 p-3 rounded-xl border border-slate-700/50">
+                            <p>• 轉介各縣市社區心理衛生中心</p>
+                            <p>• 連結志工與長照 2.0 心理支持</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Role 3: Advocate -->
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-lg flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-2xl mb-4">
+                            <i class="fa-solid fa-bullhorn"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">3. 倡議者 (Advocate)</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                            參與社區與職場健康政策倡議，推動心理健康友善職場、降低心理諮商資源的不平等，改善影響心理健康的社會決定因子（SDOH）。
+                        </p>
+                        <div class="space-y-1.5 text-xs text-slate-400 bg-slate-900/50 p-3 rounded-xl border border-slate-700/50">
+                            <p>• 倡議職場工時與心理假制度</p>
+                            <p>• 爭取弱勢族群免費心理諮商補助</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Detailed Academic Summary Card -->
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 md:p-8 shadow-lg">
+                <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                    <i class="fa-solid fa-graduation-cap text-indigo-400 mr-2"></i> 核心學理反思：健康不平等與心理三段五級預防
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-slate-300">
+                    <div class="space-y-3 bg-slate-900/50 p-5 rounded-xl border border-slate-700/50">
+                        <h4 class="font-bold text-indigo-300">💡 心理健康不平等 (Mental Health Inequity)</h4>
+                        <p class="leading-relaxed text-xs">
+                            遊戲中不同角色的壓力曲線差異，凸顯了社會經濟地位（SDOH）對心理健康的巨大影響。獨居長者缺乏數位工具與人際支持，面對變故時壓力飆升最快；而遠距青年與第一線人員也各自承受數位過載與替代性創傷。公衛護理必須看見結構性弱勢，給予差異化的資源分配。
+                        </p>
+                    </div>
+                    <div class="space-y-3 bg-slate-900/50 p-5 rounded-xl border border-slate-700/50">
+                        <h4 class="font-bold text-indigo-300">🛡️ 三段五級預防策略</h4>
+                        <p class="leading-relaxed text-xs">
+                            • <strong>初段預防（健康促進與特異保護）：</strong> 推廣正念、學校與社區心衛教育。<br>
+                            • <strong>次段預防（早期診斷與適當治療）：</strong> 焦慮與耗竭警戒時的自我照顧、安心專線 1925、心理篩檢。<br>
+                            • <strong>三段預防（限制殘障與復健）：</strong> 危機崩潰時的急診精神醫療介入與社區復健中心長期支持。
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Modal for Crisis / Question Popup -->
+    <div id="modal-overlay" class="hidden fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div id="modal-box" class="bg-slate-800 border-2 border-indigo-500/50 rounded-2xl max-w-xl w-full p-6 md:p-8 shadow-2xl transform transition-all max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center space-x-3">
+                    <div id="modal-icon-box" class="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xl shrink-0">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+                    <div>
+                        <h3 id="modal-title" class="text-lg md:text-xl font-bold text-white">公衛心靈護盾挑戰題</h3>
+                        <p id="modal-subtitle" class="text-xs text-indigo-300 font-medium">答對即可降低壓力指數，強化心理韌性！</p>
+                    </div>
+                </div>
+                <span id="modal-category-tag" class="text-[11px] bg-slate-700 text-slate-300 px-2.5 py-1 rounded-full">公衛護理</span>
+            </div>
+            
+            <p id="modal-question" class="text-slate-100 text-sm md:text-base font-medium mb-5 leading-relaxed bg-slate-900/60 p-4 rounded-xl border border-slate-700/80">
+                題目載入中...
+            </p>
+
+            <div id="modal-options" class="space-y-2.5 mb-5">
+                <!-- Options injected dynamically -->
+            </div>
+
+            <div id="modal-feedback" class="hidden p-4 rounded-xl text-xs md:text-sm font-medium mb-4 leading-relaxed">
+                <!-- Feedback injected dynamically -->
+            </div>
+
+            <div class="flex justify-between items-center">
+                <button onclick="app.toggleHandbook()" class="text-xs text-emerald-400 hover:text-emerald-300 underline flex items-center">
+                    <i class="fa-solid fa-book-open mr-1"></i> 呼叫線上組員查閱《資源手冊》
+                </button>
+                <div class="flex space-x-2">
+                    <button id="modal-submit-btn" onclick="app.submitAnswer()" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow transition hidden">
+                        確認送出答案
+                    </button>
+                    <button id="modal-close-btn" onclick="app.closeModal()" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow transition hidden">
+                        繼續遊戲 <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Hybrid Online Team Resource Handbook -->
+    <div id="handbook-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+        <div class="bg-slate-800 border border-emerald-500/40 rounded-2xl max-w-2xl w-full p-6 shadow-2xl max-h-[85vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-slate-700 pb-4 mb-4">
+                <div class="flex items-center space-x-2.5">
+                    <div class="w-9 h-9 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                        <i class="fa-solid fa-book-medical"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white">📖 數位心衛資源手冊（線上組員專用小抄庫）</h3>
+                        <p class="text-xs text-emerald-300">實體組員答題卡關時，請線上組員快速檢索以下公衛資源協助救援！</p>
+                    </div>
+                </div>
+                <button onclick="app.toggleHandbook()" class="text-slate-400 hover:text-white p-2">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-300">
+                <div class="bg-slate-900/70 p-4 rounded-xl border border-slate-700">
+                    <h4 class="font-bold text-emerald-400 mb-2">📞 台灣核心心理諮詢專線</h4>
+                    <ul class="space-y-1.5">
+                        <li>• <strong>1925（依舊愛我）：</strong>衛福部 24 小時免付費安心專線（自殺防治、心理危機介入）。</li>
+                        <li>• <strong>1995（要救救我）：</strong>生命線協談專線（24小時）。</li>
+                        <li>• <strong>1980（依舊幫您）：</strong>張老師輔導專線。</li>
+                        <li>• <strong>1966：</strong>長照服務專線（提供照顧者喘息服務與失智據點轉介）。</li>
+                    </ul>
+                </div>
+                <div class="bg-slate-900/70 p-4 rounded-xl border border-slate-700">
+                    <h4 class="font-bold text-cyan-400 mb-2">🏥 社區心理衛生政策與資源</h4>
+                    <ul class="space-y-1.5">
+                        <li>• <strong>青壯世代心理健康支持方案：</strong>衛福部提供 15-45 歲民眾每人 3 次免費心理諮商。</li>
+                        <li>• <strong>社區心理衛生中心：</strong>各縣市衛生局設置，提供心理諮商、關懷訪視、精神復健連結。</li>
+                        <li>• <strong>職場不法侵害預防：</strong>依據《職業安全衛生法》，雇主須預防職場霸凌與過勞負荷。</li>
+                    </ul>
+                </div>
+                <div class="bg-slate-900/70 p-4 rounded-xl border border-slate-700 md:col-span-2">
+                    <h4 class="font-bold text-amber-400 mb-2">🩺 心理急救（PFA）與三段五級預防重點</h4>
+                    <p class="leading-relaxed mb-2">
+                        • <strong>WHO 心理急救（PFA）五原則：</strong>① 促進安全感 (Safety) ② 促進平靜 (Calming) ③ 提升自我與集體效能 (Self-efficacy) ④ 促進社會連結 (Connectedness) ⑤ 灌注希望 (Hope)。<br>
+                        • <strong>初段預防：</strong>心理健康促進、去汙名化衛教、正念減壓與職場友善政策。<br>
+                        • <strong>次段預防：</strong>心情溫度計（BSRS-5）篩檢、高風險群電話問安、早期諮商轉介。<br>
+                        • <strong>三段預防：</strong>急性精神醫療、社區精神復健、預防復發與去機構化回歸社區。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-800/50 border-t border-slate-800 py-4 text-center text-xs text-slate-500">
+        公共衛生護理學期末互動模擬專題 ｜ 《心靈防線崩潰：全球心理危機生存戰》 © 2026
+    </footer>
+
+    <!-- Game Logic JavaScript -->
+    <script>
+        class MentalCrisisGame {
+            constructor() {
+                this.currentTab = 'game';
+                this.teamCount = 2;
+                this.teams = [];
+                this.activeTeamIdx = 0;
+                this.currentRound = 1;
+                this.maxRounds = 4; // 4 rounds x 2-4 teams = 8-16 turns total (fits 20-min gameplay!)
+                this.gameOver = false;
+                this.waitingForQuiz = false;
+                this.roundEventDrawn = false;
+                this.roundQuizDone = false;
+                this.currentQuizMode = 'routine'; // 'routine' | 'crisis75' | 'crisis90' | 'crisis100'
+                this.activeQuestion = null;
+                this.selectedOptionIndex = null;
+                this.usedQuestionIds = new Set();
+                this.usedEventIds = new Set();
+
+                this.teamColors = [
+                    { name: "第 1 組（藍隊）", border: "border-cyan-500", badge: "bg-cyan-500/20 text-cyan-300", bar: "bg-cyan-500" },
+                    { name: "第 2 組（紫隊）", border: "border-purple-500", badge: "bg-purple-500/20 text-purple-300", bar: "bg-purple-500" },
+                    { name: "第 3 組（琥珀隊）", border: "border-amber-500", badge: "bg-amber-500/20 text-amber-300", bar: "bg-amber-500" },
+                    { name: "第 4 組（翡翠隊）", border: "border-emerald-500", badge: "bg-emerald-500/20 text-emerald-300", bar: "bg-emerald-500" }
+                ];
+
+                this.characters = [
+                    {
+                        name: "💻 遠距斜槓青年",
+                        initialPressure: 45,
+                        shields: 2,
+                        desc: "自由接案，伴隨不穩定收入與深夜社群孤獨。",
+                        buffText: "🛡️ 線上社群支援 | ⚠️ 數位過載 (+10)"
+                    },
+                    {
+                        name: "🏥 醫療/第一線抗壓人員",
+                        initialPressure: 55,
+                        shields: 2,
+                        desc: "長期承擔他人痛苦，常有不能示弱的文化壓力。",
+                        buffText: "🛡️ 同儕支持團體 | ⚠️ 替代性創傷 (+10)"
+                    },
+                    {
+                        name: "👵 亞健康獨居失智長者",
+                        initialPressure: 65,
+                        shields: 1,
+                        desc: "缺乏數位工具、身體機能退化、面臨慢性孤獨。",
+                        buffText: "🛡️ 據點志工探訪 | ⚠️ 每回合自動 +8 壓力"
+                    }
+                ];
+
+                this.eventCards = [
+                    {
+                        id: "E1",
+                        title: "【全體波及】全球經濟通膨與失業率攀升潮",
+                        desc: "國際經濟動盪，物價飛漲，社會整體經濟不安全感劇增！（本組壓力 +18，其他所有存活隊伍連帶受波及 +8！）",
+                        pressureDelta: 18,
+                        aoeDelta: 8,
+                        type: "economic"
+                    },
+                    {
+                        id: "E2",
+                        title: "社群媒體演算法放大的「完美人生焦慮」",
+                        desc: "平台上充斥同儕炫耀成就與完美外表的貼文，引發嚴重的社會比較與錯失恐懼症（FOMO）。",
+                        pressureDelta: 16,
+                        aoeDelta: 0,
+                        type: "digital"
+                    },
+                    {
+                        id: "E3",
+                        title: "【全體波及】重大孤立事件與社區社交斷裂",
+                        desc: "突發傳染病或極端氣候導致社區據點暫停開放，人際連結斷裂！（本組壓力 +18，其他所有存活隊伍連帶 +8！）",
+                        pressureDelta: 18,
+                        aoeDelta: 8,
+                        type: "isolation"
+                    },
+                    {
+                        id: "E4",
+                        title: "氣候焦慮（Eco-Anxiety）與極端熱浪來襲",
+                        desc: "連續高溫與天災新聞引發對未來的無力感，高溫亦直接影響睡眠品質與情緒穩定度。",
+                        pressureDelta: 16,
+                        aoeDelta: 0,
+                        type: "climate"
+                    },
+                    {
+                        id: "E5",
+                        title: "第一線人力荒與高情緒勞動負荷",
+                        desc: "醫療與照護體系人力吃緊，連續加班與面對病患家屬情緒，導致職業倦怠快速累積。",
+                        pressureDelta: 20,
+                        aoeDelta: 0,
+                        type: "trauma"
+                    },
+                    {
+                        id: "E6",
+                        title: "深夜演算法推播負面新聞與資訊過載",
+                        desc: "睡前滑手機不斷接收到戰爭、災難與社會案件推播，引發自律神經失調與嚴重失眠。",
+                        pressureDelta: 15,
+                        aoeDelta: 0,
+                        type: "digital"
+                    },
+                    {
+                        id: "E7",
+                        title: "親友離世與身體功能退化的失落感",
+                        desc: "聽聞老友病逝的消息，加上自身關節退化難以出門，內心湧現強烈的孤寂與存在焦慮。",
+                        pressureDelta: 18,
+                        aoeDelta: 0,
+                        type: "isolation"
+                    },
+                    {
+                        id: "E8",
+                        title: "【全體受惠】公衛護理師啟動「社區心靈關懷網」",
+                        desc: "社區衛生所護理師結合心理師與志工舉辦療癒工作坊！（本組壓力 -15，其他存活隊伍同步受惠 -6！）",
+                        pressureDelta: -15,
+                        aoeDelta: -6,
+                        type: "support"
+                    },
+                    {
+                        id: "E9",
+                        title: "企業與校園全面推動「身心調適假」",
+                        desc: "政府與企業落實心理健康友善政策，允許員工與學生在心理負荷過重時請假休息。",
+                        pressureDelta: -14,
+                        aoeDelta: 0,
+                        type: "support"
+                    }
+                ];
+
+                // 20 題公共衛生與心理衛生護理題庫
+                this.questionBank = [
+                    {
+                        id: "Q1",
+                        level: "routine",
+                        category: "社區心衛資源",
+                        question: "台灣衛生福利部針對「15 歲至 45 歲青壯世代」推出的心理健康支持方案，提供每人幾次免費心理諮商服務以鼓勵早期求助？",
+                        options: [
+                            "每人終身 1 次免費諮商",
+                            "每人 3 次免費心理諮商（僅需自付掛號費等行政費）",
+                            "僅限領有重大傷病卡者才能使用",
+                            "完全免費且不限次數"
+                        ],
+                        correct: 1,
+                        reward: 15,
+                        explanation: "衛福部「青壯世代心理健康支持方案」補助 15-45 歲民眾每人 3 次心理諮商，旨在降低年輕族群尋求心理專業協助的經濟門檻（次段預防）。"
+                    },
+                    {
+                        id: "Q2",
+                        level: "routine",
+                        category: "心理篩檢工具",
+                        question: "公衛護理師在社區進行心理健康初篩時，最常使用的「心情溫度計（BSRS-5）」包含睡眠困難、緊張不安、容易苦惱動怒、憂鬱及哪一項指標？",
+                        options: [
+                            "覺得比不上別人（自卑感）＋ 附加題（自殺意念）",
+                            "血壓與血糖測量值",
+                            "每日使用社群媒體的總時數",
+                            "家族遺傳疾病史"
+                        ],
+                        correct: 0,
+                        reward: 15,
+                        explanation: "簡式健康量表（BSRS-5，俗稱心情溫度計）包含失眠、緊張、易怒、憂鬱、自卑五題，並附有第 6 題「是否有自殺的想法」作為高風險轉介依據。"
+                    },
+                    {
+                        id: "Q3",
+                        level: "routine",
+                        category: "健康不平等 SDOH",
+                        question: "從「健康的社會決定因子（SDOH）」角度分析，為何亞健康獨居長者在面對全球危機時心理壓力飆升最快？",
+                        options: [
+                            "因為長者天生抗壓性比年輕人差",
+                            "受限於數位落差、社會支持網絡薄弱、經濟與行動受限等結構性弱勢",
+                            "因為長者不喜歡與社區志工互動",
+                            "因為心理疾病只會發生在老年人身上"
+                        ],
+                        correct: 1,
+                        reward: 16,
+                        explanation: "SDOH 強調居住環境、經濟資源、數位近用性與社會支持網對健康的影響，獨居長者往往在資訊獲取與人際支持上處於結構性弱勢。"
+                    },
+                    {
+                        id: "Q4",
+                        level: "routine",
+                        category: "三段五級預防",
+                        question: "公衛護理師到國中與大學校園舉辦「認識憂鬱症與破除求助汙名化」講座，這屬於心理衛生三段五級預防中的哪一個層級？",
+                        options: [
+                            "初段預防：健康促進（Primary Prevention）",
+                            "次段預防：早期診斷與適當治療（Secondary Prevention）",
+                            "三段預防：限制殘障（Tertiary Prevention）",
+                            "三段預防：復健階段（Rehabilitation）"
+                        ],
+                        correct: 0,
+                        reward: 15,
+                        explanation: "在疾病或危機尚未發生前，透過衛教提升民眾心理健康識能（Mental Health Literacy）與營造支持環境，屬於初段預防的健康促進。"
+                    },
+                    {
+                        id: "Q5",
+                        level: "routine",
+                        category: "護理師三大角色",
+                        question: "當公衛護理師發現轄區內有許多獨居失智長者缺乏照顧資源，主動串聯里長、長照 2.0 居家服務與社區心衛中心建立關懷網，這展現了護理師的哪項核心角色？",
+                        options: [
+                            "個案管理者與資源連結者（Case Manager & Collaborator）",
+                            "臨床麻醉專科護理師",
+                            "純粹的行政文書人員",
+                            "藥品研發人員"
+                        ],
+                        correct: 0,
+                        reward: 15,
+                        explanation: "公衛護理師作為個案管理者與資源連結者，負責評估社區脆弱族群需求，並跨專業整合社福、長照與醫療資源。"
+                    },
+                    {
+                        id: "Q6",
+                        level: "routine",
+                        category: "護理師三大角色",
+                        question: "公衛護理師向地方政府與企業建言，推動「高壓力職場心理健康友善認證」與改善醫護過勞工時，這發揮了護理師的哪項關鍵角色？",
+                        options: [
+                            "倡議者（Advocate）",
+                            "急診檢傷分類員",
+                            "醫療器材銷售員",
+                            "單純的傾聽者"
+                        ],
+                        correct: 0,
+                        reward: 16,
+                        explanation: "倡議者（Advocate）是從上游政策與環境面著手，為弱勢或高風險族群發聲，推動改善社會結構與健康政策。"
+                    },
+                    {
+                        id: "Q7",
+                        level: "routine",
+                        category: "數位心理衛生",
+                        question: "遠距工作者常因社群比較與資訊過載產生「錯失恐懼症（FOMO）」與焦慮，下列哪項自我照顧策略最具實證效果？",
+                        options: [
+                            "設定「數位排毒（Digital Detox）」時段，關閉非必要推播並建立工作與生活邊界",
+                            "24 小時掛在線上隨時回覆訊息以證明自己很努力",
+                            "熬夜滑短影音直到精疲力竭睡著",
+                            "每天喝 4 杯濃縮咖啡提神"
+                        ],
+                        correct: 0,
+                        reward: 15,
+                        explanation: "建立明確的數位邊界與工作生活區隔，能有效減少交感神經長期過度亢奮，預防慢性耗竭（Burnout）。"
+                    },
+                    {
+                        id: "Q8",
+                        level: "routine",
+                        category: "替代性創傷",
+                        question: "醫療、社工與救災人員長期接觸創傷個案，出現情緒麻木、易怒、噩夢與無力感，這種現象在公衛與心理學上稱為什麼？",
+                        options: [
+                            "替代性創傷（Vicarious Trauma）與同情心疲乏（Compassion Fatigue）",
+                            "急性闌尾炎",
+                            "季節性過敏反應",
+                            "創傷後成長（PTG）"
+                        ],
+                        correct: 0,
+                        reward: 16,
+                        explanation: "助人工作者因長期共情他人痛苦而產生的次級創傷反應稱為「替代性創傷」，需要透過同儕支持團體與督導機制進行減壓。"
+                    },
+                    {
+                        id: "Q9",
+                        level: "routine",
+                        category: "長照與照顧者支持",
+                        question: "當社區中照顧失智長者的家屬出現嚴重情緒崩潰與喘不過氣時，公衛護理師可建議家屬撥打哪一支專線申請「居家喘息服務」？",
+                        options: [
+                            "1966 長照服務專線",
+                            "110 報案專線",
+                            "165 反詐騙專線",
+                            "1999 市民熱線（僅限交通檢舉）"
+                        ],
+                        correct: 0,
+                        reward: 15,
+                        explanation: "1966 為衛福部長照服務專線，可評估並提供居家服務、日間照顧及家庭照顧者喘息服務，預防照顧者悲劇。"
+                    },
+                    {
+                        id: "Q10",
+                        level: "routine",
+                        category: "去汙名化衛教",
+                        question: "關於精神疾病與心理困擾的「去汙名化（Anti-stigma）」觀念，下列敘述何者正確？",
+                        options: [
+                            "憂鬱症是大腦神經傳導物質與環境壓力交互作用的結果，並非「抗壓性差」或「想太多」",
+                            "看身心科或心理諮商代表這個人意志力薄弱",
+                            "精神疾病患者都具有高度暴力傾向，應該全部隔離",
+                            "只要靠自己「正能量思考」就絕對不需要藥物或諮商"
+                        ],
+                        correct: 0,
+                        reward: 16,
+                        explanation: "將心理疾病視為生理、心理與社會環境共同影響的健康議題，破除「抗壓性差」的標籤，是提升早期求助率的關鍵。"
+                    },
+                    {
+                        id: "Q11",
+                        level: "routine",
+                        category: "職場心理健康",
+                        question: "依據台灣《職業安全衛生法》規定，雇主針對職場上因他人行為遭受身體或精神不法侵害（如職場霸凌、高壓羞辱），負有何種責任？",
+                        options: [
+                            "雇主應妥為規劃並採取必要之安全衛生預防措施",
+                            "屬於員工私人恩怨，雇主完全無需介入",
+                            "只有員工離職後才能申訴",
+                            "僅適用於製造業，醫療與服務業不適用"
+                        ],
+                        correct: 0,
+                        reward: 15,
+                        explanation: "《職安法》第 6 條第 2 項明定雇主有預防「執行職務因他人行為遭受身體或精神不法侵害」之法定義務。"
+                    },
+                    {
+                        id: "Q12",
+                        level: "routine",
+                        category: "高齡心理健康",
+                        question: "預防社區獨居長者憂鬱與失智，公衛護理師推動「社會處方箋（Social Prescribing）」，下列何者屬於社會處方箋的應用？",
+                        options: [
+                            "轉介長者參與社區共餐、園藝治療、懷舊桌遊或志工服務，重建人際連結",
+                            "直接開立最高劑量的鎮靜安眠藥",
+                            "建議長者整天待在家裡看電視避免出門",
+                            "要求長者自行上網學習寫程式"
+                        ],
+                        correct: 0,
+                        reward: 16,
+                        explanation: "社會處方箋透過連結非醫療的社區活動（如藝術、運動、共餐、志工），有效改善孤獨感與初老憂鬱。"
+                    },
+                    {
+                        id: "C75_1",
+                        level: "crisis75",
+                        category: "🟡 75分警戒：慢性焦慮與耗竭",
+                        question: "【75分警戒觸發】你已出現持續性失眠、注意力渙散與情緒易怒（慢性耗竭徵兆）。此時公衛護理師建議的「睡眠衛生與自律神經調節」處置何者正確？",
+                        options: [
+                            "睡前飲用烈酒幫助快速入睡",
+                            "固定作息時間、睡前 1 小時遠離藍光螢幕，並練習 4-7-8 腹式呼吸法",
+                            "週末一次補眠 16 小時以償還平日睡眠債",
+                            "躺在床上睡不著時強迫自己一直看時鐘計算時間"
+                        ],
+                        correct: 1,
+                        reward: 18,
+                        explanation: "酒精雖能縮短入睡時間但會破壞後半夜深層睡眠；固定作息與腹式呼吸能活化副交感神經，改善慢性焦慮失眠。"
+                    },
+                    {
+                        id: "C75_2",
+                        level: "crisis75",
+                        category: "🟡 75分警戒：慢性焦慮與耗竭",
+                        question: "【75分警戒觸發】面對長期工作與經濟壓力導致的「職業倦怠（Burnout）」，世界衛生組織（WHO）建議的因應策略不包含下列何者？",
+                        options: [
+                            "向主管或同儕表達工作負荷，尋求合理的任務調整與支持",
+                            "運用正念（Mindfulness）覺察當下情緒而不批判自己",
+                            "不斷壓抑情緒並承攬更多額外工作來證明自我價值",
+                            "培養工作以外的興趣與社會支持圈"
+                        ],
+                        correct: 2,
+                        reward: 18,
+                        explanation: "過度承攬與壓抑情緒會加速耗竭惡化為重度憂鬱；覺察界線並尋求支持才是健康調適。"
+                    },
+                    {
+                        id: "C90_1",
+                        level: "crisis90",
+                        category: "🟠 90分警戒：急性焦慮與恐慌發作",
+                        question: "【90分警戒觸發】個案突然出現心悸、胸悶、呼吸急促、手腳發麻與強烈的瀕死感（恐慌發作 Panic Attack），現場最優先的心理急救處置為何？",
+                        options: [
+                            "大聲指責個案「不要演戲、沒什麼好怕的」",
+                            "保持冷靜陪伴在側，用溫和語氣引導「慢吸氣、慢吐氣」並轉移注意力至當下感官（5-4-3-2-1著陸法）",
+                            "拿塑膠袋緊緊套住個案口鼻強迫呼吸",
+                            "立刻把個案獨自鎖在房間裡冷靜"
+                        ],
+                        correct: 1,
+                        reward: 25,
+                        explanation: "恐慌發作通常在 10-20 分鐘內達到高峰，陪伴者保持穩定、引導放慢呼吸與感官著陸（Grounding）能有效緩解過度換氣與恐懼。"
+                    },
+                    {
+                        id: "C90_2",
+                        level: "crisis90",
+                        category: "🟠 90分警戒：急性心理危機資源配對",
+                        question: "【90分警戒觸發】深夜時分，獨居個案情緒極度低落、不斷哭泣並表示「活著好累」，你應立即協助撥打哪一支衛福部 24 小時免付費專線？",
+                        options: [
+                            "1925（依舊愛我）安心專線",
+                            "117 報時台",
+                            "104 查號台",
+                            "1955 勞工諮詢專線"
+                        ],
+                        correct: 0,
+                        reward: 25,
+                        explanation: "1925（諧音：依舊愛我）為衛福部 24 小時免付費心理諮詢與自殺防治安心專線，提供即時危機談話與資源轉介。"
+                    },
+                    {
+                        id: "C100_1",
+                        level: "crisis100",
+                        category: "🔴 100分崩潰警戒：自殺危機與心理急救",
+                        question: "【100分崩潰警戒】個案已出現明確自殺意念與計畫，面臨生命安全危機！依據自殺防治守門人「一問、二應、三轉介」與 WHO 心理急救（PFA）原則，下列處置何者最正確？",
+                        options: [
+                            "答應個案「絕對幫你保密，不告訴任何家人或醫療人員」",
+                            "移除周遭危險物品、絕不讓個案獨處，給予同理陪伴（一問二應），並立即聯繫家屬、119 或護送至精神科急診（三轉介）",
+                            "用激將法說「你有種就做做看」",
+                            "叫個案自己回家睡一覺明天就會好"
+                        ],
+                        correct: 1,
+                        reward: 35,
+                        explanation: "當涉及自傷/自殺安全危機時，「生命安全」優先於保密原則！必須移除危險物、專人陪伴不獨處，並立即啟動緊急醫療與家屬轉介。"
+                    },
+                    {
+                        id: "C100_2",
+                        level: "crisis100",
+                        category: "🔴 100分崩潰警戒：災難與創傷心理急救",
+                        question: "【100分崩潰警戒】在重大社區災難或心理崩潰現場執行「心理急救（Psychological First Aid, PFA）」時，下列哪一組為正確的五大核心行動原則？",
+                        options: [
+                            "安全（Safety）、平靜（Calming）、自我效能（Self-efficacy）、連結（Connectedness）、希望（Hope）",
+                            "隔離、批判、強迫傾訴、藥物控制、遺忘",
+                            "診斷、貼標籤、住院、開刀、觀察",
+                            "冷漠、效率、保密、放任、等待"
+                        ],
+                        correct: 0,
+                        reward: 35,
+                        explanation: "Hobfoll 等人提出並獲 WHO 採納的心理急救五大實證原則為：促進安全、促進平靜、提升自我與集體效能、促進聯繫、灌注希望。"
+                    }
+                ];
+
+                // Initialize default 2 teams setup UI
+                this.setTeamCount(2);
+            }
+
+            setTeamCount(count) {
+                this.teamCount = count;
+                [2, 3, 4].forEach(n => {
+                    const btn = document.getElementById(`btn-teams-${n}`);
+                    if (n === count) {
+                        btn.className = "team-count-btn px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white transition shadow";
+                    } else {
+                        btn.className = "team-count-btn px-4 py-2 rounded-xl text-xs font-bold bg-slate-700 text-slate-300 hover:bg-slate-600 transition";
+                    }
+                });
+                this.renderTeamSetupCards();
+            }
+
+            renderTeamSetupCards() {
+                const grid = document.getElementById('team-setup-grid');
+                grid.innerHTML = '';
+                for (let i = 0; i < this.teamCount; i++) {
+                    const defaultCharIdx = i % this.characters.length;
+                    const color = this.teamColors[i];
+                    grid.innerHTML += `
+                        <div class="bg-slate-800/90 border-2 ${color.border} rounded-2xl p-4 shadow-lg flex flex-col justify-between space-y-3">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold px-2.5 py-0.5 rounded-full ${color.badge}">隊伍 ${i + 1}</span>
+                                    <i class="fa-solid fa-shield-heart text-slate-400"></i>
+                                </div>
+                                <label class="block text-[11px] text-slate-400 mb-1">隊伍名稱（可自訂組別）</label>
+                                <input type="text" id="team-name-input-${i}" value="${color.name}" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-bold focus:outline-none focus:border-indigo-500 mb-3">
+                                
+                                <label class="block text-[11px] text-slate-400 mb-1">指派社會角色</label>
+                                <select id="team-char-select-${i}" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 font-medium focus:outline-none focus:border-indigo-500">
+                                    <option value="0" ${defaultCharIdx === 0 ? 'selected' : ''}>💻 遠距斜槓青年 (初始45分)</option>
+                                    <option value="1" ${defaultCharIdx === 1 ? 'selected' : ''}>🏥 醫療/第一線人員 (初始55分)</option>
+                                    <option value="2" ${defaultCharIdx === 2 ? 'selected' : ''}>👵 亞健康獨居長者 (初始65分)</option>
+                                </select>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            toggleHandbook() {
+                const modal = document.getElementById('handbook-modal');
+                modal.classList.toggle('hidden');
+            }
+
+            switchTab(tabId) {
+                this.currentTab = tabId;
+                if (tabId === 'game') {
+                    document.getElementById('tab-game').classList.remove('hidden');
+                    document.getElementById('tab-reflection').classList.add('hidden');
+                    document.getElementById('nav-game').className = "px-3.5 py-2 text-xs md:text-sm font-medium rounded-lg bg-indigo-600 text-white transition shadow hover:bg-indigo-500";
+                    document.getElementById('nav-reflection').className = "px-3.5 py-2 text-xs md:text-sm font-medium rounded-lg bg-slate-700 text-slate-300 transition hover:bg-slate-600 hover:text-white";
+                } else {
+                    document.getElementById('tab-game').classList.add('hidden');
+                    document.getElementById('tab-reflection').classList.remove('hidden');
+                    document.getElementById('nav-game').className = "px-3.5 py-2 text-xs md:text-sm font-medium rounded-lg bg-slate-700 text-slate-300 transition hover:bg-slate-600 hover:text-white";
+                    document.getElementById('nav-reflection').className = "px-3.5 py-2 text-xs md:text-sm font-medium rounded-lg bg-indigo-600 text-white transition shadow hover:bg-indigo-500";
+                }
+            }
+
+            startGame() {
+                this.teams = [];
+                for (let i = 0; i < this.teamCount; i++) {
+                    const nameInput = document.getElementById(`team-name-input-${i}`).value.trim() || this.teamColors[i].name;
+                    const charIdx = parseInt(document.getElementById(`team-char-select-${i}`).value, 10);
+                    const charObj = this.characters[charIdx];
+                    this.teams.push({
+                        id: i,
+                        name: nameInput,
+                        charIdx: charIdx,
+                        charName: charObj.name,
+                        buffText: charObj.buffText,
+                        pressure: charObj.initialPressure,
+                        shields: charObj.shields,
+                        eliminated: false,
+                        eliminatedRound: null,
+                        color: this.teamColors[i]
+                    });
+                }
+
+                this.activeTeamIdx = 0;
+                this.currentRound = 1;
+                this.gameOver = false;
+                this.waitingForQuiz = false;
+                this.roundEventDrawn = false;
+                this.roundQuizDone = false;
+                this.usedQuestionIds.clear();
+                this.usedEventIds.clear();
+
+                document.getElementById('view-setup').classList.add('hidden');
+                document.getElementById('view-gameover').classList.add('hidden');
+                document.getElementById('view-gameplay').classList.remove('hidden');
+
+                document.getElementById('game-log').innerHTML = '';
+                this.log(`[多人對戰開始] 共 ${this.teamCount} 支隊伍參戰！輪流抽取危機事件與回答公衛題目。`);
+                this.updateAllUI();
+                this.resetTurnButtons();
+            }
+
+            getActiveTeam() {
+                return this.teams[this.activeTeamIdx];
+            }
+
+            updateAllUI() {
+                const activeTeam = this.getActiveTeam();
+                document.getElementById('round-indicator').innerText = `第 ${this.currentRound} 回合 / 共 ${this.maxRounds} 回合`;
+                
+                // Update Active Team Banner
+                document.getElementById('active-team-name').innerText = activeTeam.name;
+                document.getElementById('active-char-name').innerText = activeTeam.charName;
+                document.getElementById('active-debuff-text').innerText = activeTeam.buffText;
+                document.getElementById('shield-count').innerText = activeTeam.shields + " 次";
+
+                const shieldBtn = document.getElementById('shield-btn');
+                if (activeTeam.shields <= 0) {
+                    shieldBtn.disabled = true;
+                    shieldBtn.className = "px-4 py-2.5 bg-slate-700 text-slate-500 text-xs font-bold rounded-xl cursor-not-allowed flex items-center space-x-1.5";
+                } else {
+                    shieldBtn.disabled = false;
+                    shieldBtn.className = "px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow transition flex items-center space-x-1.5";
+                }
+
+                // Render Scoreboard for all teams
+                const board = document.getElementById('scoreboard-grid');
+                board.innerHTML = '';
+                this.teams.forEach((team, idx) => {
+                    const isCurrent = (idx === this.activeTeamIdx && !team.eliminated);
+                    const ringClass = isCurrent ? "ring-2 ring-amber-400 bg-slate-800" : "bg-slate-900/70 opacity-90";
+                    const statusBadge = team.eliminated 
+                        ? `<span class="text-[10px] bg-red-500/20 text-red-400 px-2 py-0.5 rounded font-bold">💀 已崩潰淘汰</span>`
+                        : (team.pressure >= 75 
+                            ? `<span class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded font-bold">⚠️ 警戒中</span>`
+                            : `<span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-bold">🛡️ 防線穩定</span>`);
+
+                    board.innerHTML += `
+                        <div class="border ${isCurrent ? 'border-amber-400' : 'border-slate-700'} ${ringClass} rounded-xl p-3.5 transition-all">
+                            <div class="flex justify-between items-center mb-1.5">
+                                <span class="font-bold text-xs md:text-sm text-white truncate pr-1">${team.name}</span>
+                                ${statusBadge}
+                            </div>
+                            <div class="text-[11px] text-slate-400 mb-2 flex justify-between">
+                                <span>${team.charName}</span>
+                                <span>🛡️ ${team.shields}</span>
+                            </div>
+                            <div class="flex justify-between items-center text-xs font-bold mb-1">
+                                <span class="text-slate-400">心靈壓力</span>
+                                <span class="${team.pressure >= 90 ? 'text-red-400' : (team.pressure >= 75 ? 'text-amber-400' : 'text-emerald-400')}">${team.pressure} / 100</span>
+                            </div>
+                            <div class="w-full bg-slate-950 rounded-full h-2.5 overflow-hidden border border-slate-800">
+                                <div class="h-full transition-all duration-500 ${team.pressure >= 90 ? 'bg-red-500' : (team.pressure >= 75 ? 'bg-amber-500' : team.color.bar)}" style="width: ${Math.min(100, team.pressure)}%"></div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            resetTurnButtons() {
+                this.roundEventDrawn = false;
+                this.roundQuizDone = false;
+                const activeTeam = this.getActiveTeam();
+
+                document.getElementById('step-badge').innerHTML = `<i class="fa-solid fa-bolt mr-1"></i> 步驟 1：${activeTeam.name} 抽事件卡`;
+                document.getElementById('draw-card-btn').disabled = false;
+                document.getElementById('draw-card-btn').className = "w-full py-3.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition flex items-center justify-center space-x-2";
+
+                document.getElementById('routine-quiz-btn').disabled = true;
+                document.getElementById('routine-quiz-btn').className = "w-full py-3.5 bg-slate-700 text-slate-500 font-bold rounded-xl transition flex items-center justify-center space-x-2 cursor-not-allowed";
+
+                document.getElementById('next-round-btn').disabled = true;
+                document.getElementById('next-round-btn').className = "w-full py-3 bg-slate-700 text-slate-400 font-bold rounded-xl transition cursor-not-allowed";
+                document.getElementById('next-round-btn').innerText = "完成本組兩階段挑戰後切換下一組";
+            }
+
+            log(msg) {
+                const logBox = document.getElementById('game-log');
+                logBox.innerHTML += `<p class="leading-relaxed">${msg}</p>`;
+                logBox.scrollTop = logBox.scrollHeight;
+            }
+
+            drawEventCard() {
+                if (this.waitingForQuiz || this.roundEventDrawn) return;
+                const activeTeam = this.getActiveTeam();
+
+                let availableEvents = this.eventCards.filter(e => !this.usedEventIds.has(e.id));
+                if (availableEvents.length === 0) {
+                    this.usedEventIds.clear();
+                    availableEvents = this.eventCards;
+                }
+
+                const card = availableEvents[Math.floor(Math.random() * availableEvents.length)];
+                this.usedEventIds.add(card.id);
+                this.roundEventDrawn = true;
+
+                document.getElementById('event-card-id').innerText = `Round ${this.currentRound} • ${activeTeam.name}`;
+                document.getElementById('event-title').innerText = card.title;
+                document.getElementById('event-desc').innerText = card.desc;
+
+                let delta = card.pressureDelta;
+
+                // Character passive adjustments
+                if (activeTeam.charIdx === 0 && card.type === "digital") {
+                    delta += 10;
+                    this.log(`[被動] ${activeTeam.name} 遠距青年數位過載，壓力額外 +10！`);
+                }
+                if (activeTeam.charIdx === 1 && (card.type === "trauma" || card.type === "isolation")) {
+                    delta += 10;
+                    this.log(`[被動] ${activeTeam.name} 第一線人員替代性創傷，壓力額外 +10！`);
+                }
+                if (activeTeam.charIdx === 2 && card.type !== "support") {
+                    delta += 8;
+                    this.log(`[被動] ${activeTeam.name} 獨居長者慢性孤獨，基礎壓力 +8！`);
+                }
+
+                activeTeam.pressure = Math.max(0, Math.min(100, activeTeam.pressure + delta));
+                this.log(`[${activeTeam.name}] 抽取【${card.title}】，壓力 ${delta > 0 ? '+' + delta : delta} 分（現為 ${activeTeam.pressure}分）。`);
+
+                // Apply AOE splash effect to other surviving teams!
+                if (card.aoeDelta && card.aoeDelta !== 0) {
+                    this.teams.forEach((t, idx) => {
+                        if (idx !== this.activeTeamIdx && !t.eliminated) {
+                            t.pressure = Math.max(0, Math.min(100, t.pressure + card.aoeDelta));
+                            if (t.pressure >= 100) {
+                                t.eliminated = true;
+                                t.eliminatedRound = this.currentRound;
+                                this.log(`💀 [連鎖衝擊] ${t.name} 受全球危機波及，壓力達 100 分防線崩潰！`);
+                            }
+                        }
+                    });
+                    this.log(`🌊 [全體波及效應] 其他隊伍同步受影響 ${card.aoeDelta > 0 ? '+' + card.aoeDelta : card.aoeDelta} 分！`);
+                }
+
+                this.updateAllUI();
+
+                document.getElementById('draw-card-btn').disabled = true;
+                document.getElementById('draw-card-btn').className = "w-full py-3.5 bg-slate-700 text-slate-400 font-bold rounded-xl transition flex items-center justify-center space-x-2 cursor-not-allowed";
+
+                if (activeTeam.pressure >= 75) {
+                    this.checkThresholds();
+                } else {
+                    this.enableRoutineQuizButton();
+                }
+            }
+
+            enableRoutineQuizButton() {
+                const activeTeam = this.getActiveTeam();
+                document.getElementById('step-badge').innerHTML = `<i class="fa-solid fa-clipboard-question mr-1"></i> 步驟 2：${activeTeam.name} 答題挑戰`;
+                const quizBtn = document.getElementById('routine-quiz-btn');
+                quizBtn.disabled = false;
+                quizBtn.className = "w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl shadow-lg shadow-emerald-600/30 transition flex items-center justify-center space-x-2 animate-pulse-slow";
+            }
+
+            getUnusedQuestion(level) {
+                let pool = this.questionBank.filter(q => q.level === level && !this.usedQuestionIds.has(q.id));
+                if (pool.length === 0) {
+                    pool = this.questionBank.filter(q => q.level === level);
+                }
+                const selected = pool[Math.floor(Math.random() * pool.length)];
+                this.usedQuestionIds.add(selected.id);
+                return selected;
+            }
+
+            triggerRoutineQuiz() {
+                if (this.waitingForQuiz || this.roundQuizDone) return;
+                const activeTeam = this.getActiveTeam();
+                this.currentQuizMode = 'routine';
+                const q = this.getUnusedQuestion('routine');
+                this.openQuestionModal(
+                    q,
+                    `🛡️ 【${activeTeam.name}】公衛心靈護盾挑戰`,
+                    `答對即可主動降低 ${q.reward} 分壓力，拉開與對手的差距！`,
+                    "border-emerald-500/60"
+                );
+            }
+
+            checkThresholds() {
+                const activeTeam = this.getActiveTeam();
+                if (activeTeam.pressure >= 100) {
+                    this.triggerCrisis(100);
+                } else if (activeTeam.pressure >= 90) {
+                    this.triggerCrisis(90);
+                } else if (activeTeam.pressure >= 75) {
+                    this.triggerCrisis(75);
+                }
+            }
+
+            triggerCrisis(level) {
+                const activeTeam = this.getActiveTeam();
+                this.currentQuizMode = `crisis${level}`;
+                const q = this.getUnusedQuestion(`crisis${level}`);
+                const borderClass = level === 100 ? "border-red-500" : (level === 90 ? "border-orange-500" : "border-amber-500");
+                this.openQuestionModal(
+                    q,
+                    `⚠️ 【${activeTeam.name}】觸發 ${level} 分警戒線搶救！`,
+                    `必須答對公衛處置題才能降低 ${q.reward} 分壓力，否則將面臨淘汰風險！`,
+                    borderClass
+                );
+                this.log(`⚠️ [${activeTeam.name}] 壓力達 ${activeTeam.pressure} 分！觸發【${level}分警戒線】搶救題！`);
+            }
+
+            openQuestionModal(questionObj, modalTitle, modalSubtitle, borderColorClass) {
+                this.waitingForQuiz = true;
+                this.activeQuestion = questionObj;
+                this.selectedOptionIndex = null;
+
+                const modalBox = document.getElementById('modal-box');
+                modalBox.className = `bg-slate-800 border-2 ${borderColorClass} rounded-2xl max-w-xl w-full p-6 md:p-8 shadow-2xl transform transition-all max-h-[90vh] overflow-y-auto`;
+
+                document.getElementById('modal-title').innerText = modalTitle;
+                document.getElementById('modal-subtitle').innerText = modalSubtitle;
+                document.getElementById('modal-category-tag').innerText = questionObj.category;
+                document.getElementById('modal-question').innerText = questionObj.question;
+
+                const optionsContainer = document.getElementById('modal-options');
+                optionsContainer.innerHTML = '';
+                document.getElementById('modal-submit-btn').classList.add('hidden');
+                document.getElementById('modal-close-btn').classList.add('hidden');
+                document.getElementById('modal-feedback').classList.add('hidden');
+
+                questionObj.options.forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = "w-full text-left p-3.5 rounded-xl bg-slate-900 border border-slate-700 hover:border-indigo-500 text-slate-200 text-xs md:text-sm font-medium transition flex items-center space-x-3";
+                    btn.innerHTML = `<span class="w-6 h-6 rounded-lg bg-slate-800 text-indigo-400 flex items-center justify-center font-bold text-xs shrink-0">${['A','B','C','D'][idx]}</span><span>${opt}</span>`;
+                    btn.onclick = () => this.selectOption(idx, btn);
+                    optionsContainer.appendChild(btn);
+                });
+
+                document.getElementById('modal-overlay').classList.remove('hidden');
+            }
+
+            selectOption(idx, btnElement) {
+                if (!document.getElementById('modal-close-btn').classList.contains('hidden')) return;
+                this.selectedOptionIndex = idx;
+                document.querySelectorAll('#modal-options button').forEach((b, i) => {
+                    if (i === idx) {
+                        b.className = "w-full text-left p-3.5 rounded-xl bg-indigo-600/20 border-2 border-indigo-500 text-white text-xs md:text-sm font-medium transition flex items-center space-x-3";
+                    } else {
+                        b.className = "w-full text-left p-3.5 rounded-xl bg-slate-900 border border-slate-700 hover:border-indigo-500 text-slate-200 text-xs md:text-sm font-medium transition flex items-center space-x-3";
+                    }
+                });
+                document.getElementById('modal-submit-btn').classList.remove('hidden');
+            }
+
+            submitAnswer() {
+                if (this.selectedOptionIndex === null) return;
+                const activeTeam = this.getActiveTeam();
+                const isCorrect = (this.selectedOptionIndex === this.activeQuestion.correct);
+                const feedbackDiv = document.getElementById('modal-feedback');
+                feedbackDiv.classList.remove('hidden');
+
+                document.querySelectorAll('#modal-options button').forEach((b, i) => {
+                    b.disabled = true;
+                    if (i === this.activeQuestion.correct) {
+                        b.className = "w-full text-left p-3.5 rounded-xl bg-emerald-600/20 border-2 border-emerald-500 text-emerald-200 text-xs md:text-sm font-medium flex items-center space-x-3";
+                    } else if (i === this.selectedOptionIndex && !isCorrect) {
+                        b.className = "w-full text-left p-3.5 rounded-xl bg-red-600/20 border-2 border-red-500 text-red-200 text-xs md:text-sm font-medium flex items-center space-x-3";
+                    }
+                });
+
+                if (isCorrect) {
+                    feedbackDiv.className = "p-4 rounded-xl text-xs md:text-sm font-medium mb-4 bg-emerald-500/20 border border-emerald-500/40 text-emerald-200 leading-relaxed";
+                    feedbackDiv.innerHTML = `<div class="font-bold text-emerald-300 mb-1"><i class="fa-solid fa-circle-check mr-1.5"></i>回答正確！${activeTeam.name} 壓力下降 ${this.activeQuestion.reward} 分！</div><div><strong>📚 公衛解析：</strong>${this.activeQuestion.explanation}</div>`;
+                    activeTeam.pressure = Math.max(0, activeTeam.pressure - this.activeQuestion.reward);
+                    this.log(`[${activeTeam.name}] 答題成功，壓力 -${this.activeQuestion.reward} 分（現為 ${activeTeam.pressure}分）。`);
+                } else {
+                    const penalty = this.currentQuizMode === 'routine' ? 5 : 10;
+                    feedbackDiv.className = "p-4 rounded-xl text-xs md:text-sm font-medium mb-4 bg-red-500/20 border border-red-500/40 text-red-200 leading-relaxed";
+                    feedbackDiv.innerHTML = `<div class="font-bold text-red-300 mb-1"><i class="fa-solid fa-circle-xmark mr-1.5"></i>回答錯誤！${activeTeam.name} 壓力上升 ${penalty} 分。</div><div><strong>📚 公衛解析：</strong>${this.activeQuestion.explanation}</div>`;
+                    activeTeam.pressure = Math.min(100, activeTeam.pressure + penalty);
+                    this.log(`[${activeTeam.name}] 答題錯誤，壓力 +${penalty} 分（現為 ${activeTeam.pressure}分）。`);
+                }
+
+                this.updateAllUI();
+                document.getElementById('modal-submit-btn').classList.add('hidden');
+                document.getElementById('modal-close-btn').classList.remove('hidden');
+            }
+
+            closeModal() {
+                document.getElementById('modal-overlay').classList.add('hidden');
+                this.waitingForQuiz = false;
+                this.roundQuizDone = true;
+
+                const activeTeam = this.getActiveTeam();
+                const quizBtn = document.getElementById('routine-quiz-btn');
+                quizBtn.disabled = true;
+                quizBtn.className = "w-full py-3.5 bg-slate-700 text-slate-400 font-bold rounded-xl transition flex items-center justify-center space-x-2 cursor-not-allowed";
+
+                if (activeTeam.pressure >= 100) {
+                    activeTeam.eliminated = true;
+                    activeTeam.eliminatedRound = this.currentRound;
+                    this.log(`💀 [${activeTeam.name}] 壓力達到 100 分，心靈防線全面崩潰退出戰局！`);
+                    this.updateAllUI();
+                }
+
+                // Check if 1 or 0 surviving teams left
+                const survivors = this.teams.filter(t => !t.eliminated);
+                if (survivors.length <= 1) {
+                    const nextBtn = document.getElementById('next-round-btn');
+                    nextBtn.disabled = false;
+                    nextBtn.className = "w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl transition shadow";
+                    nextBtn.innerText = "🏆 戰局已定！查看最終排行榜";
+                    return;
+                }
+
+                // Enable Next Turn button
+                const nextBtn = document.getElementById('next-round-btn');
+                nextBtn.disabled = false;
+                nextBtn.className = "w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition shadow";
+                nextBtn.innerText = "結束本組回合 ➔ 換下一組行動";
+            }
+
+            useShield() {
+                const activeTeam = this.getActiveTeam();
+                if (activeTeam.shields <= 0) return;
+                activeTeam.shields--;
+                activeTeam.pressure = Math.max(0, activeTeam.pressure - 15);
+                this.log(`[防護盾] ${activeTeam.name} 消耗 1 次社區防護盾，壓力 -15 分（現為 ${activeTeam.pressure}分）。`);
+                this.updateAllUI();
+            }
+
+            nextTurn() {
+                if (this.waitingForQuiz || !this.roundQuizDone) return;
+
+                const survivors = this.teams.filter(t => !t.eliminated);
+                if (survivors.length <= 1) {
+                    this.showLeaderboard();
+                    return;
+                }
+
+                // Find next surviving team
+                let nextIdx = this.activeTeamIdx + 1;
+                let wrappedRound = false;
+
+                while (nextIdx < this.teams.length && this.teams[nextIdx].eliminated) {
+                    nextIdx++;
+                }
+
+                if (nextIdx >= this.teams.length) {
+                    // Wrap around to new round
+                    wrappedRound = true;
+                    this.currentRound++;
+                    if (this.currentRound > this.maxRounds) {
+                        this.showLeaderboard();
+                        return;
+                    }
+                    nextIdx = 0;
+                    while (nextIdx < this.teams.length && this.teams[nextIdx].eliminated) {
+                        nextIdx++;
+                    }
+                }
+
+                this.activeTeamIdx = nextIdx;
+                this.updateAllUI();
+                this.resetTurnButtons();
+
+                const nextTeam = this.getActiveTeam();
+                document.getElementById('event-card-id').innerText = `Round ${this.currentRound} • ${nextTeam.name}`;
+                document.getElementById('event-title').innerText = `輪到【${nextTeam.name}】行動！請抽取事件卡`;
+                document.getElementById('event-desc').innerText = `目前壓力：${nextTeam.pressure} 分。請先抽取危機事件卡，再進行公衛答題降壓挑戰！`;
+                
+                if (wrappedRound) {
+                    this.log(`=== 進入第 ${this.currentRound} 回合 ===`);
+                }
+                this.log(`👉 輪到【${nextTeam.name}】行動。`);
+            }
+
+            showLeaderboard() {
+                document.getElementById('view-gameplay').classList.add('hidden');
+                document.getElementById('view-gameover').classList.remove('hidden');
+
+                // Sort teams: surviving first (lowest pressure wins), then eliminated (later elimination wins)
+                const ranked = [...this.teams].sort((a, b) => {
+                    if (!a.eliminated && b.eliminated) return -1;
+                    if (a.eliminated && !b.eliminated) return 1;
+                    if (!a.eliminated && !b.eliminated) return a.pressure - b.pressure;
+                    return (b.eliminatedRound || 0) - (a.eliminatedRound || 0);
+                });
+
+                const podium = document.getElementById('final-podium');
+                podium.innerHTML = '';
+
+                const medals = ['🥇 冠軍', '🥈 亞軍', '🥉 季軍', '🎖️ 第 4 名'];
+                ranked.forEach((team, idx) => {
+                    const isWinner = idx === 0 && !team.eliminated;
+                    podium.innerHTML += `
+                        <div class="p-4 rounded-2xl border ${isWinner ? 'bg-amber-500/15 border-amber-400 shadow-lg' : 'bg-slate-800/90 border-slate-700'} flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <span class="text-base md:text-lg font-black ${isWinner ? 'text-amber-300' : 'text-slate-300'} w-20">${medals[idx]}</span>
+                                <div>
+                                    <div class="font-bold text-white text-sm md:text-base">${team.name} <span class="text-xs font-normal text-slate-400">(${team.charName})</span></div>
+                                    <div class="text-xs text-slate-400 mt-0.5">
+                                        ${team.eliminated ? `於第 ${team.eliminatedRound} 回合心靈防線崩潰` : `成功守住防線！剩餘防護盾：${team.shields} 次`}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="block text-[10px] text-slate-400">最終壓力指數</span>
+                                <span class="text-lg md:text-xl font-black ${team.eliminated ? 'text-red-400' : 'text-emerald-400'}">${team.pressure} 分</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            resetGame() {
+                document.getElementById('view-gameover').classList.add('hidden');
+                document.getElementById('view-setup').classList.remove('hidden');
+                this.setTeamCount(this.teamCount);
+            }
+        }
+
+        // Initialize App
+        const app = new MentalCrisisGame();
+    </script>
+</body>
+</html>
